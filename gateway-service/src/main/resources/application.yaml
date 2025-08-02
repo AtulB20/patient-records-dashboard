@@ -1,0 +1,57 @@
+server:
+  port: 8080
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: gateway-service
+  
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+        - id: patient-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/patients/**,/api/patients/*/visits/**,/api/patients/*/medications/**
+
+# Actuator Configuration
+management:
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    metrics:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+    web:
+      server:
+        request:
+          autotime:
+            enabled: true
+
+auth-service:
+  url: ${AUTH_SERVICE_URI:http://localhost:8081}
+
+# Logging Configuration
+logging:
+  level:
+    org.springframework: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.reactive: WARN
+    reactor.netty: WARN
+    com.healthcare: DEBUG

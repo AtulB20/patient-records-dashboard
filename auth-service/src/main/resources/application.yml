@@ -1,0 +1,37 @@
+server:
+  port: 8084
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hc_database
+    username: hc_user
+    password: secret
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          secret-key: TmV3U2VjcmV0S2V5Rm9yQXJjaGl2YWxTZXJ2aWNlSldUU2lnbmluZ1B1cnBvc2U
+          expiration: 86400000
+
+jwt:
+  secret: TmV3U2VjcmV0S2V5Rm9yQXJjaGl2YWxTZXJ2aWNlSldUU2lnbmluZ1B1cnBvc2U
+  expiration: 86400000 # 24 hours in milliseconds
+
+logging:
+  level:
+    org.springframework: INFO
+    com.healthcare: DEBUG

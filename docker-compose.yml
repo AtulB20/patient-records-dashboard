@@ -1,0 +1,42 @@
+services:
+  hc-postgres:
+    image: postgres:16.9-bullseye
+    container_name: hc-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql/db
+      - ./db_init:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_DB=hc_database
+      - POSTGRES_USER=hc_user
+      - POSTGRES_PASSWORD=secret
+
+#  auth-service:
+#    build: ./auth-service
+#    container_name: auth-service
+#    depends_on:
+#      - hc-postgres
+#    ports:
+#      - "8081:8080"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: docker
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-live:5432/database
+#      SPRING_DATASOURCE_USERNAME: database_user
+#      SPRING_DATASOURCE_PASSWORD: secret
+#
+#  gateway-service:
+#    build: ./gateway-service
+#    container_name: gateway-service
+#    depends_on:
+#      - auth-service
+#    ports:
+#      - "8082:8080"
+#    environment:
+#      AUTH_SERVICE_URI: http://auth-service:8081
+networks:
+  archival-net:
+    driver: bridge
+
+volumes:
+  pgdata:
