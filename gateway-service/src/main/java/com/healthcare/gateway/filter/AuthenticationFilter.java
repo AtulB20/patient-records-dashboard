@@ -53,7 +53,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
           requestBuilder.header(X_USER_ID_HEADER, String.valueOf(authResponse.getId()));
 
           // Add X-User-Role header
-          requestBuilder.header(X_USER_ROLES_HEADER, authResponse.getRole());
+          requestBuilder.header(X_USER_ROLES_HEADER, authResponse.getRole().toString());
 
           // Continue the filter chain with the modified request
           return chain.filter(exchange.mutate().request(requestBuilder.build()).build());
