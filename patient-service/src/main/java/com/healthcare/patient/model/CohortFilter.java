@@ -3,9 +3,13 @@ package com.healthcare.patient.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CohortFilter {
     private String name;          // Full name or partial match
     private String email;         // Exact email match
@@ -21,6 +25,6 @@ public class CohortFilter {
     // Pagination/Sorting fields (often included in filters)
     private Integer page = 0;
     private Integer size = 10;
-    private String sortBy = "name"; // Default sort field
+    private String sortBy = "firstName"; // Default sort field
     private String sortDirection = "ASC"; // "ASC" or "DESC"
 }

@@ -7,7 +7,7 @@ import com.healthcare.patient.model.Patient;
 import com.healthcare.patient.model.PatientStatus;
 import com.healthcare.patient.repository.PatientRepository;
 import com.healthcare.patient.service.PatientService;
-import jakarta.persistence.criteria.Predicate;
+import com.healthcare.patient.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,8 +17,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -26,6 +25,7 @@ import java.util.Optional;
 public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
+    private final SecurityUtils securityUtils;
 
     @Override
     public PatientDTO getPatientById(Long id) {
@@ -38,7 +38,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public Page<PatientDTO> filterPatients(CohortFilter filter) {
-        Specification<Patient> spec = buildSpecification(filter);
+        Specification<Patient> spec = createSpecificationFromCriteria(filter);
         Pageable pageable = buildPageable(filter);
         return patientRepository.findAll(spec, pageable).map(PatientDTO::fromEntity);
     }
@@ -51,6 +51,8 @@ public class PatientServiceImpl implements PatientService {
         }
 
         Patient patient = PatientDTO.toEntity(request);
+        patient.setCreatedBy(securityUtils.getCurrentUser().getId());
+
         Patient savedPatient = patientRepository.save(patient);
 
         return PatientDTO.fromEntity(savedPatient);
@@ -74,8 +76,9 @@ public class PatientServiceImpl implements PatientService {
         if (patientDto.getGender() != null) {
             patient.setGender(patientDto.getGender());
         }
-        
+        patient.setUpdatedAt(LocalDateTime.now());
         Patient updatedPatient = patientRepository.save(patient);
+
         return PatientDTO.fromEntity(updatedPatient);
     }
 
@@ -86,21 +89,6 @@ public class PatientServiceImpl implements PatientService {
             .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
         patient.setStatus(PatientStatus.INACTIVE); // Soft delete
         patientRepository.save(patient);
-    }
-
-    private Specification<Patient> buildSpecification(CohortFilter filter) {
-        return (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            
-            if (filter.getName() != null) {
-                predicates.add(cb.like(root.get("name"), "%" + filter.getName() + "%"));
-            }
-            if (filter.getDobFrom() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("dob"), filter.getDobFrom()));
-            }
-            
-            return cb.and(predicates.toArray(new Predicate[0]));
-        };
     }
 
     private Pageable buildPageable(CohortFilter filter) {

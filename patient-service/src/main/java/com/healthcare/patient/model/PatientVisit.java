@@ -45,4 +45,15 @@ public class PatientVisit {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private VisitStatus status = VisitStatus.PENDING;
+
+    public enum VisitStatus {
+        PENDING,
+        COMPLETED,
+        CANCELLED,
+        NO_SHOW
+    }
 }

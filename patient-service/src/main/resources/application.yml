@@ -5,10 +5,9 @@ spring:
   application:
     name: patient-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/healthcare_db
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/healthcare}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -18,11 +17,20 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: actuator,health,info,metrics
+  security:
+    enabled: false
+
 jwt:
   secret: TmV3U2VjcmV0S2V5Rm9yQXJjaGl2YWxTZXJ2aWNlSldUU2lnbmluZ1B1cnBvc2U
   expiration: 86400000 # 24 hours in milliseconds
 
 logging:
   level:
+    com.healthcare.patient: INFO
     org.springframework: DEBUG
     com.healthcare: DEBUG

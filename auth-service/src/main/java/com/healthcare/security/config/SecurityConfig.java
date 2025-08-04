@@ -46,7 +46,7 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .cors(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/auth/token", "/error").permitAll()
+            .requestMatchers("/actuator/**", "/auth/token", "/error").permitAll()
             .anyRequest().authenticated()
         )
         .oauth2ResourceServer((oauth2) -> oauth2.jwt(withDefaults()))

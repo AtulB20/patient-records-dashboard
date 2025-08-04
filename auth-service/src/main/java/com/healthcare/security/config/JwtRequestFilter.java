@@ -44,6 +44,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
       token = authHeader.substring(7);
       // Extracting username from the token
       userName = tokenService.extractUserName(token);
+    } else if (request.getRequestURI().startsWith("/actuator")) {
+      // Continue
     } else {
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header");
       return;

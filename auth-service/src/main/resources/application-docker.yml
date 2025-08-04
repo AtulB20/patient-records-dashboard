@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: auth-service
+    management:
+      endpoint:
+        health:
+          show-details: always
+          group.custom:
+            show-components: always
+        metrics:
+          enabled: true
+        prometheus:
+          enabled: true
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics,prometheus
+        jmx:
+          exposure:
+            include: '*'
+      health:
+        defaults:
+          enabled: true
+        db:
+          enabled: true
+        diskSpace:
+          enabled: true
+        livenessState:
+          enabled: true
+        readinessState:
+          enabled: true
+      metrics:
+        enable:
+          jvm: true
+          system: true
+          process: true
+          http: true
+          hikaricp: true
+        distribution:
+          percentiles-histogram:
+            http.server.requests: true
+        web:
+          server:
+            request:
+              autotime:
+                enabled: true
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  jpa:
+    show-sql: false
+logging:
+  level:
+    com.healthcare.security: INFO
+    org.springframework: ERROR
+    org.hibernate: ERROR
+    com.zaxxer.hikari: ERROR
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000 # 24 hours in milliseconds    

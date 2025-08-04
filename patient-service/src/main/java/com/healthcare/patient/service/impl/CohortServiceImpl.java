@@ -6,11 +6,14 @@ import com.healthcare.patient.exception.ResourceNotFoundException;
 import com.healthcare.patient.model.Cohort;
 import com.healthcare.patient.model.CohortFilter;
 import com.healthcare.patient.model.Patient;
+import com.healthcare.patient.model.PatientVisit;
 import com.healthcare.patient.repository.CohortRepository;
 import com.healthcare.patient.repository.PatientRepository;
 import com.healthcare.patient.service.CohortService;
 
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import com.healthcare.patient.util.SecurityUtils;
 
 import java.util.ArrayList;
 
@@ -30,6 +34,9 @@ public class CohortServiceImpl implements CohortService {
 
   @Autowired
   private PatientRepository patientRepository;
+  
+  @Autowired
+  private SecurityUtils securityUtils;
 
   @Override
   @Transactional
@@ -50,12 +57,15 @@ public class CohortServiceImpl implements CohortService {
 
   @Override
   @Transactional
-  public CohortDTO createCohort(CohortDTO cohortDto, Long createdBy) {
+  public CohortDTO createCohort(CohortDTO cohortDto) {
     log.info("Creating new cohort: {}", cohortDto.getName());
     
     if (cohortRepository.existsByName(cohortDto.getName())) {
       throw new IllegalArgumentException("Cohort with name " + cohortDto.getName() + " already exists");
     }
+    
+    // Get the currently authenticated user
+    Long createdBy = securityUtils.getCurrentUser().getId();
     Cohort cohort = CohortDTO.toEntity(cohortDto, createdBy);
     
     Cohort savedCohort = cohortRepository.save(cohort);
@@ -110,52 +120,4 @@ public class CohortServiceImpl implements CohortService {
     return cohortRepository.findAll(pageable).map(CohortDTO::from);
   }
 
-  private Specification<Patient> createSpecificationFromCriteria(CohortFilter criteria) {
-    return (root, query, criteriaBuilder) -> {
-      var predicates = new ArrayList<Predicate>();
-      
-      if (criteria.getName() != null) {
-        predicates.add(criteriaBuilder.like(root.get("name"), "%" + criteria.getName() + "%"));
-      }
-      
-      if (criteria.getEmail() != null) {
-        predicates.add(criteriaBuilder.like(root.get("email"), "%" + criteria.getEmail() + "%"));
-      }
-      
-      if (criteria.getPhone() != null) {
-        predicates.add(criteriaBuilder.like(root.get("phone"), "%" + criteria.getPhone() + "%"));
-      }
-      
-      if (criteria.getDobFrom() != null) {
-        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("dob"), criteria.getDobFrom()));
-      }
-      
-      if (criteria.getDobTo() != null) {
-        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("dob"), criteria.getDobTo()));
-      }
-      
-      if (criteria.getGender() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("gender"), criteria.getGender()));
-      }
-      
-      if (criteria.getStatuses() != null && !criteria.getStatuses().isEmpty()) {
-        predicates.add(criteriaBuilder.in(root.get("status")).value(criteria.getStatuses()));
-      }
-      
-      if (criteria.getDoctorId() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("doctor"), criteria.getDoctorId()));
-      }
-      
-      if (criteria.getNurseId() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("nurse"), criteria.getNurseId()));
-      }
-      
-      if (criteria.getHasPendingAppointments() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("hasPendingAppointments"), criteria.getHasPendingAppointments()));
-      }
-      
-      return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-    };
-    
-  }
 }

@@ -18,7 +18,7 @@ spring:
             - RewritePath=/api/(?<segment>.*), /$\{segment}
 
         - id: patient-service
-          uri: http://localhost:8083
+          uri: ${PATIENT_SERVICE_URI:http://localhost:8082}
           predicates:
             - Path=/api/patients/**,/api/patients/*/visits/**,/api/patients/*/medications/**
 
@@ -45,7 +45,7 @@ management:
             enabled: true
 
 auth-service:
-  url: ${AUTH_SERVICE_URI:http://localhost:8081}
+  url: http://localhost:8081
 
 # Logging Configuration
 logging:

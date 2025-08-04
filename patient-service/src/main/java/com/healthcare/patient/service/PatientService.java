@@ -6,7 +6,7 @@ import com.healthcare.patient.model.CohortFilter;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 
-public interface PatientService {
+public interface PatientService extends PatientSpecification {
     PatientDTO getPatientById(Long id);
     Page<PatientDTO> filterPatients(CohortFilter filter);
     PatientDTO create(@Valid PatientDTO patientDto);

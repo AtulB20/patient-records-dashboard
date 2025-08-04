@@ -12,7 +12,7 @@ public class Role implements GrantedAuthority {
   private Long id;
 
   @Column(unique = true, nullable = false)
-  private String name;  // e.g., "ROLE_ADMIN"
+  private String name;
 
   @Override
   public String getAuthority() {

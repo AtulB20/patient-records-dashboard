@@ -11,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -71,4 +72,15 @@ public class Patient {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private PatientStatus status;
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PatientVisit> visits;
+
+    public boolean hasPendingVisits() {
+        if (visits == null || visits.isEmpty()) {
+            return false;
+        }
+        return visits.stream()
+            .anyMatch(visit -> visit.getStatus() == PatientVisit.VisitStatus.PENDING);
+    }
 }

@@ -25,14 +25,11 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .cors(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/public/**").permitAll() // Allow public access to certain paths
-            .anyRequest().authenticated() // All other requests require authentication
+            .anyRequest().authenticated()
         )
         .oauth2ResourceServer(oauth2 -> oauth2
-            .jwt(jwt -> jwt.decoder(jwtDecoder())) // Use a custom JwtDecoder bean
+            .jwt(jwt -> jwt.decoder(jwtDecoder()))
         );
-    // .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // For stateless APIs
-
     return http.build();
   }
 

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "patient_cohort")
+@Table(name = "PATIENT_COHORT")
 public class Cohort {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +30,7 @@ public class Cohort {
   private String description;
 
   @JdbcTypeCode(SqlTypes.JSON)
+  @Column(columnDefinition = "jsonb")
   private CohortFilter cohortFilter;
 
   @Column(name = "created_by", nullable = false)

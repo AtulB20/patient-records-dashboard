@@ -26,11 +26,6 @@ public class CohortDTO {
     private boolean system;
     private Long patientCount; // Will be populated when needed
     
-    /**
-     * Converts a Cohort entity to a CohortDTO
-     * @param cohort The Cohort entity to convert
-     * @return A new CohortDTO instance
-     */
     public static CohortDTO from(Cohort cohort) {
         if (cohort == null) {
             return null;

@@ -60,54 +60,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-    // @Override
-    // protected ResponseEntity<Object> handleMethodArgumentNotValid(
-    //         MethodArgumentNotValidException ex, HttpHeaders headers,
-    //         HttpStatus status, WebRequest request) {
-        
-    //     Map<String, Object> body = new LinkedHashMap<>();
-    //     body.put("timestamp", LocalDateTime.now());
-    //     body.put("status", status.value());
-    //     body.put("error", "Bad Request");
-    //     body.put("message", "Validation error");
-        
-    //     List<String> errors = ex.getBindingResult()
-    //             .getFieldErrors()
-    //             .stream()
-    //             .map(error -> error.getField() + ": " + error.getDefaultMessage())
-    //             .collect(Collectors.toList());
-        
-    //     body.put("errors", errors);
-        
-    //     return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    // }
-
-    /*@ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Object> handleAuthenticationException(
-            AuthenticationException ex, WebRequest request) {
-        
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.UNAUTHORIZED.value());
-        body.put("error", "Unauthorized");
-        body.put("message", ex.getMessage());
-        
-        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Object> handleAccessDeniedException(
-            AccessDeniedException ex, WebRequest request) {
-        
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.FORBIDDEN.value());
-        body.put("error", "Forbidden");
-        body.put("message", "Access denied");
-        
-        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
-    }*/
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();

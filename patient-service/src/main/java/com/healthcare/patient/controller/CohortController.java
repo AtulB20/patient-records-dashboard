@@ -52,8 +52,7 @@ public class CohortController {
   @PostMapping
   @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_NURSE')")
   public ResponseEntity<CohortDTO> createCohort(@Valid @RequestBody CohortDTO cohortDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    return ResponseEntity.ok(cohortService.createCohort(cohortDto, 1L));
+    return ResponseEntity.ok(cohortService.createCohort(cohortDto));
   }
 
   /**

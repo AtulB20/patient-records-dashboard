@@ -5,8 +5,8 @@ import com.healthcare.patient.dto.PatientDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface CohortService {
-  CohortDTO createCohort(CohortDTO cohortDto, Long createdBy);
+public interface CohortService extends PatientSpecification {
+  CohortDTO createCohort(CohortDTO cohortDto);
 
   CohortDTO updateCohort(Long id, CohortDTO cohortDto);
 
